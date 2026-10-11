@@ -1,3 +1,5 @@
+import mongoose from 'mongoose'
+import { connectDatabase } from './db.js'
 import express from 'express'
 import cors from 'cors'
 import { z } from 'zod'
@@ -10,8 +12,7 @@ app.use(cors({origin: process.env.CLIENT_ORIGIN?.split(',') || 'http://localhost
 app.use(express.json({limit:'1mb'}))
 let memoryVehicles: VehicleRecord[] = [...seedVehicles]
 const memoryBookings: any[] = []
-const useDb = () => Boolean(process.env.MONGODB_URI && (globalThis as any).__mongoReady)
-
+const useDb = () => mongoose.connection.readyState === 1
 app.get('/api/health',(_req,res)=>res.json({ok:true,service:'BMW ELITE API',database:useDb()?'mongodb':'demo-memory'}))
 
 app.get('/api/vehicles',async(req,res,next)=>{
